@@ -1,0 +1,43 @@
+---
+page_title: "Provider: Unraid"
+description: |-
+  Manage an Unraid server through the Unraid GraphQL API.
+---
+
+# Unraid Provider
+
+Manage an [Unraid](https://unraid.net) server as code through the official Unraid GraphQL API
+(Unraid OS 7.x with the Unraid API / Connect plugin).
+
+Works with Terraform and OpenTofu.
+
+## Authentication
+
+1. In the Unraid web UI, open **Settings → Management Access → API Keys** and create a key.
+2. Give it the least privilege you need: the `VIEWER` role is enough for every data source.
+   Each data source documents the resource/action it requires.
+3. Configure the provider, preferably through environment variables:
+
+```shell
+export UNRAID_ENDPOINT="https://tower.local/graphql"
+export UNRAID_API_KEY="..."
+```
+
+Use `https` where possible: the API key is sent as a request header.
+For a self-signed certificate set `insecure_skip_verify = true` (not recommended).
+
+## Example Usage
+
+{{ tffile "examples/provider/provider.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Limitations
+
+The provider only uses the Unraid GraphQL API. The API currently has no mutations for:
+
+- creating or changing user shares (available read-only as `unraid_shares`),
+- creating or configuring Docker containers or VMs,
+- network settings and user accounts.
+
+These remain web-UI-only until the Unraid API supports them.

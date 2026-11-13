@@ -1,0 +1,28 @@
+name: test
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
+        with:
+          tofu_wrapper: false
+      - run: go vet ./...
+      - name: Generated code and docs are up to date
+        run: |
+          go generate ./...
+          git diff --exit-code
+      - run: go tool tfplugindocs validate
+      - name: Unit tests (fake Unraid server, real tofu)
+        run: TF_ACC_TERRAFORM_PATH="$(which tofu)" go test ./...
+        env:
+          TF_ACC_PROVIDER_NAMESPACE: jriberg
