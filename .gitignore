@@ -1,0 +1,10 @@
+/terraform-provider-unraid
+/dist/
+*.swp
+*~
+.DS_Store
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+testing/**

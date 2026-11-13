@@ -1,0 +1,228 @@
+query GetVars {
+  vars {
+    id
+    version
+    name
+    comment
+    timeZone
+    workgroup
+    domain
+    localTld
+    useSsl
+    port
+    portssl
+    useSsh
+    portssh
+    useTelnet
+    useNtp
+    ntpServer1
+    ntpServer2
+    ntpServer3
+    ntpServer4
+    startArray
+    spindownDelay
+    defaultFsType
+    shareSmbEnabled
+    shareNfsEnabled
+    shareCacheEnabled
+    shareMoverSchedule
+    shareCount
+    mdState
+    fsState
+    regTy
+  }
+}
+
+query GetServer {
+  server {
+    id
+    guid
+    name
+    comment
+    status
+    lanip
+    localurl
+  }
+}
+
+query GetShares {
+  shares {
+    id
+    name
+    comment
+    free
+    used
+    size
+    include
+    exclude
+    cache
+    allocator
+    splitLevel
+    floor
+    cow
+    luksStatus
+  }
+}
+
+fragment ArrayDiskFields on ArrayDisk {
+  id
+  idx
+  name
+  device
+  size
+  status
+  type
+  rotational
+  temp
+  fsType
+  fsSize
+  fsFree
+  fsUsed
+  numErrors
+  isSpinning
+}
+
+query GetArray {
+  array {
+    id
+    state
+    capacity {
+      kilobytes {
+        free
+        used
+        total
+      }
+    }
+    # @genqlient(flatten: true)
+    parities {
+      ...ArrayDiskFields
+    }
+    # @genqlient(flatten: true)
+    disks {
+      ...ArrayDiskFields
+    }
+    # @genqlient(flatten: true)
+    caches {
+      ...ArrayDiskFields
+    }
+    # @genqlient(flatten: true)
+    bootDevices {
+      ...ArrayDiskFields
+    }
+  }
+}
+
+query GetDisks {
+  disks {
+    id
+    device
+    type
+    name
+    vendor
+    size
+    serialNum
+    firmwareRevision
+    interfaceType
+    smartStatus
+    temperature
+    isSpinning
+  }
+}
+
+query GetDockerContainers {
+  docker {
+    containers {
+      id
+      names
+      image
+      state
+      status
+      autoStart
+      autoStartOrder
+      autoStartWait
+      hostConfig {
+        networkMode
+      }
+      ports {
+        ip
+        privatePort
+        publicPort
+        type
+      }
+      isUpdateAvailable
+      webUiUrl
+    }
+  }
+}
+
+query GetVms {
+  vms {
+    domains {
+      id
+      name
+      state
+    }
+  }
+}
+
+query GetSystemTime {
+  systemTime {
+    currentTime
+    timeZone
+    useNtp
+    ntpServers
+  }
+}
+
+query GetUpsConfiguration {
+  upsConfiguration {
+    service
+    upsCable
+    customUpsCable
+    upsType
+    device
+    overrideUpsCapacity
+    batteryLevel
+    minutes
+    timeout
+    killUps
+    nisIp
+    netServer
+    upsName
+    modelName
+  }
+}
+
+# The secret `key` field is deliberately not requested.
+query GetApiKeys {
+  apiKeys {
+    id
+    name
+    description
+    roles
+    createdAt
+    permissions {
+      resource
+      actions
+    }
+  }
+}
+
+# Remote parameters/config hold credentials and are deliberately not requested.
+query GetRCloneRemotes {
+  rclone {
+    remotes {
+      name
+      type
+    }
+  }
+}
+
+query GetUnifiedSettings {
+  settings {
+    unified {
+      id
+      values
+    }
+  }
+}
